@@ -68,6 +68,7 @@ const targetSchemas = ref<string[]>([]);
 const targetTables = ref<string[]>([]);
 
 const keyColumnsText = ref("");
+const ignoredColumnsText = ref("");
 const detailPreviewLimit = ref(String(PREVIEW_LIMIT_OPTIONS[1]));
 const batchResults = ref<DataCompareTableResult[]>([]);
 const syncPlan = ref<DataCompareSyncPlan>(emptyDataCompareSyncPlan());
@@ -115,6 +116,12 @@ const missingTargetTables = computed(() => compareTasksPreview.value.filter((tas
 const canCompare = computed(() => sourceConnectionId.value && sourceDatabase.value && sourceSchema.value && selectedSourceTableNames.value.length > 0 && targetConnectionId.value && targetDatabase.value && targetSchema.value);
 const keyColumns = computed(() =>
   keyColumnsText.value
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean),
+);
+const ignoredColumns = computed(() =>
+  ignoredColumnsText.value
     .split(",")
     .map((value) => value.trim())
     .filter(Boolean),
@@ -223,6 +230,7 @@ async function restoreDataCompareSession(session: DataCompareSession): Promise<v
     targetTables.value = [...config.targetTables];
     targetTable.value = config.targetTable;
     keyColumnsText.value = config.keyColumns.join(", ");
+    ignoredColumnsText.value = config.ignoredColumns.join(", ");
     batchResults.value = session.batchResults;
     syncPlan.value = session.syncPlan;
     syncErrors.value = [];
@@ -536,6 +544,7 @@ function startCompare(): void {
       targetTables: [...targetTables.value],
       targetTable: targetTable.value,
       keyColumns: [...keyColumns.value],
+      ignoredColumns: [...ignoredColumns.value],
       label: `${comparisonEndpointLabel(sourceConnectionId.value, sourceDatabase.value, sourceSchema.value)} → ${comparisonEndpointLabel(targetConnectionId.value, targetDatabase.value, targetSchema.value)}`,
     },
     tasks,
@@ -915,6 +924,14 @@ onBeforeUnmount(() => {
           <Input v-model="keyColumnsText" class="h-8 text-xs" :placeholder="t('dataCompare.keyColumnsPlaceholder')" :disabled="comparing" />
           <div class="text-[11px] text-muted-foreground">
             {{ t("dataCompare.keyColumnsAutoHint") }}
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <Label class="text-xs font-medium">{{ t("dataCompare.ignoredColumns") }}</Label>
+          <Input v-model="ignoredColumnsText" class="h-8 text-xs" :placeholder="t('dataCompare.ignoredColumnsPlaceholder')" :disabled="comparing" />
+          <div class="text-[11px] text-muted-foreground">
+            {{ t("dataCompare.ignoredColumnsHint") }}
           </div>
         </div>
 

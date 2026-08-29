@@ -42,6 +42,7 @@ export interface DataComparePreparationOptions {
   schema?: string;
   columns: string[];
   keyColumns: string[];
+  ignoredColumns?: string[];
   columnInfo?: ColumnInfo[];
   sourceRows: DataCompareCellValue[][];
   targetRows: DataCompareCellValue[][];
@@ -65,6 +66,7 @@ export interface DataCompareFromTablesOptions {
   targetTable: string;
   columns: string[];
   keyColumns: string[];
+  ignoredColumns?: string[];
   /** Source-side column names aligned positionally with `columns`; needed when the two databases store identifier case differently (e.g. SQL Server vs Oracle). */
   sourceColumns?: string[];
   fetchBatchSize?: number;

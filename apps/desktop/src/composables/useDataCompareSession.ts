@@ -76,6 +76,7 @@ export interface DataCompareSessionConfig {
   targetTables: string[];
   targetTable: string;
   keyColumns: string[];
+  ignoredColumns: string[];
   label: string;
 }
 
@@ -131,6 +132,7 @@ function cloneConfig(config: DataCompareSessionConfig): DataCompareSessionConfig
     targetSchemas: [...config.targetSchemas],
     targetTables: [...config.targetTables],
     keyColumns: [...config.keyColumns],
+    ignoredColumns: [...config.ignoredColumns],
   };
 }
 
@@ -329,6 +331,7 @@ async function runDataCompareSession(session: DataCompareSession, tasks: DataCom
             targetTable: task.targetTable,
             columns,
             keyColumns: canonicalKeyColumns,
+            ignoredColumns: input.ignoredColumns,
             sourceColumns: matched.sourceColumns,
           });
           keyColumns = canonicalKeyColumns;
